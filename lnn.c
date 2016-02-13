@@ -21,11 +21,11 @@ static const luaL_Reg lnn_fns[] = {
 	NULL
 };
 
-LUALIB_API int luaopen_lnn(lua_State *L) {
+LUALIB_API int luaopen_nn(lua_State *L) {
 #if LUA_VERSION_NUM >= 502
 	luaL_newlib(L, lnn_fns);
 #else
-	luaL_register(L, "lnn", lnn_fns);
+	luaL_register(L, "nn", lnn_fns);
 #endif
 
 	{
