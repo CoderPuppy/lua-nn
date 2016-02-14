@@ -53,7 +53,8 @@ static int lnn_socket(lua_State *L) {
 		luaL_error(L, "%s", nn_strerror(nn_errno()));
 
 	*((int*) lua_newuserdata(L, sizeof(int))) = s;
-	luaL_setmetatable(L, LNN_SOCKET);
+	luaL_getmetatable(L, LNN_SOCKET);
+	lua_setmetatable(L, -2);
 
 	return 1;
 }
@@ -68,7 +69,8 @@ static int lnn_poll(lua_State *L) {
 	poll->len = 0;
 	struct lnn_poll **ptr = lua_newuserdata(L, sizeof(struct lnn_poll*));
 	*ptr = poll;
-	luaL_setmetatable(L, LNN_POLL);
+	luaL_getmetatable(L, LNN_POLL);
+	lua_setmetatable(L, -2);
 	return 1;
 }
 
