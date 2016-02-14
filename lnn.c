@@ -170,11 +170,11 @@ static int lnn_socket_recv(lua_State *L) {
 	int s = *((int*) luaL_checkudata(L, 1, LNN_SOCKET));
 
 	int flags = 0;
-	if(lua_gettop(L) >= 3 && lua_isinteger(L, 3)) {
+	if(lua_gettop(L) >= 3 && lua_isnumber(L, 3)) {
 		flags = luaL_checkinteger(L, 3);
 	}
 
-	if(lua_gettop(L) >= 2 && lua_isinteger(L, 2)) {
+	if(lua_gettop(L) >= 2 && lua_isnumber(L, 2)) {
 		int buf_len = luaL_checkinteger(L, 2);
 		char *buf = malloc(buf_len);
 		int recv_len = nn_recv(s, buf, buf_len, flags);
@@ -211,7 +211,7 @@ static int lnn_socket_send(lua_State *L) {
 	const char *msg = luaL_checklstring(L, 2, &len);
 
 	int flags = 0;
-	if(lua_gettop(L) >= 3 && lua_isinteger(L, 3)) {
+	if(lua_gettop(L) >= 3 && lua_isnumber(L, 3)) {
 		flags = luaL_checkinteger(L, 3);
 	}
 
@@ -239,7 +239,7 @@ static int lnn_socket_setopt(lua_State *L) {
 
 	if(lua_isstring(L, 4)) {
 		val = luaL_checklstring(L, 4, &len);
-	} else if(lua_isinteger(L, 4)) {
+	} else if(lua_isnumber(L, 4)) {
 		int ival = luaL_checkinteger(L, 4);
 		val = (char*) &ival;
 		len = sizeof(ival);
@@ -330,7 +330,7 @@ static int lnn_poll_add(lua_State *L) {
 static int lnn_poll_poll(lua_State *L) {
 	struct lnn_poll *poll = *((struct lnn_poll**) luaL_checkudata(L, 1, LNN_POLL));
 	int timeout = -1;
-	if(lua_gettop(L) >= 2 && lua_isinteger(L, 2))
+	if(lua_gettop(L) >= 2 && lua_isnumber(L, 2))
 		timeout = lua_tointeger(L, 2);
 
 	int r = nn_poll(&poll->fds, poll->len, timeout);
