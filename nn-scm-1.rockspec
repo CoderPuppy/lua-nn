@@ -1,5 +1,11 @@
 package = "nn"
 version = "scm-1"
+description = {
+	summary = "Nanomsg bindings for Lua",
+	homepage = "http://github.com/CoderPuppy/lua-nn",
+	license = "MIT",
+	maintainer = "CoderPuppy <coderpup@gmail.com>",
+}
 source = {
 	url = "git://github.com/CoderPuppy/lua-nn.git"
 }
