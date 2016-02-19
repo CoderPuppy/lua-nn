@@ -32,7 +32,8 @@ LUALIB_API int luaopen_nn(lua_State *L) {
 		int value;
 		const char *name;
 
-		for(int n = 0; (name = nn_symbol(n, &value)) != NULL; n++) {
+		int n = 0;
+		for(; (name = nn_symbol(n, &value)) != NULL; n++) {
 			lua_pushinteger(L, value);
 			lua_setfield(L, -2, name);
 		}
@@ -180,10 +181,10 @@ static int lnn_socket_recv(lua_State *L) {
 		int recv_len = nn_recv(s, buf, buf_len, flags);
 		if(recv_len == -1) {
 			int err = nn_errno();
-			if(errno & EAGAIN)
+			if(err & EAGAIN)
 				return 0;
 			else
-				luaL_error(L, "%s", nn_strerror(nn_errno()));
+				luaL_error(L, "%s", nn_strerror(err));
 		}
 		lua_pushlstring(L, buf, recv_len);
 
@@ -194,7 +195,7 @@ static int lnn_socket_recv(lua_State *L) {
 		int recv_len = nn_recv(s, &buf, NN_MSG, flags);
 		if(recv_len == -1) {
 			int err = nn_errno();
-			if(errno & EAGAIN)
+			if(err & EAGAIN)
 				return 0;
 			else
 				luaL_error(L, "%s", nn_strerror(err));
@@ -217,10 +218,10 @@ static int lnn_socket_send(lua_State *L) {
 
 	if(nn_send(s, msg, len, flags) == 1) {
 		int err = nn_errno();
-		if(errno & EAGAIN)
+		if(err & EAGAIN)
 			return 0;
 		else
-			luaL_error(L, "%s", nn_strerror(nn_errno()));
+			luaL_error(L, "%s", nn_strerror(err));
 	}
 
 	lua_pushinteger(L, len);
@@ -243,6 +244,8 @@ static int lnn_socket_setopt(lua_State *L) {
 		int ival = luaL_checkinteger(L, 4);
 		val = (char*) &ival;
 		len = sizeof(ival);
+	} else {
+		return luaL_error(L, "invalid option value: %s", lua_tostring(L, 4));
 	}
 
 	if(nn_setsockopt(s, level, option, val, len) == -1)
@@ -307,7 +310,7 @@ static int lnn_poll_add(lua_State *L) {
 	struct lnn_poll **ptr = luaL_checkudata(L, 1, LNN_POLL);
 	struct lnn_poll *poll = *ptr;
 	int s = *((int*) luaL_checkudata(L, 2, LNN_SOCKET));
-	bool inp, out = false;
+	bool inp = false, out = false;
 	if(lua_gettop(L) >= 3) {
 		inp = lua_toboolean(L, 3);
 		if(lua_gettop(L) >= 4) {
