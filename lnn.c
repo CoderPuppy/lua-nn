@@ -216,7 +216,7 @@ static int lnn_socket_send(lua_State *L) {
 		flags = luaL_checkinteger(L, 3);
 	}
 
-	if(nn_send(s, msg, len, flags) == 1) {
+	if(nn_send(s, msg, len, flags) == -1) {
 		int err = nn_errno();
 		if(err & EAGAIN)
 			return 0;
